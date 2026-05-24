@@ -1,0 +1,24 @@
+name: .NET DevOps Lab
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build-and-run:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Kód letöltése
+      uses: actions/checkout@v4
+      
+    - name: .NET beállítása
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+        
+    - name: Projekt buildelése (Build)
+      run: dotnet build
+      
+    - name: Program futtatása (Run)
+      run: dotnet run
