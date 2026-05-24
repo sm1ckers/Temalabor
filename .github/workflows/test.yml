@@ -6,8 +6,8 @@ on:
 
 permissions:
   issues: write
-  contents: write
-  checks: write   
+  contents: write 
+  checks: write
 
 jobs:
   test:
@@ -23,12 +23,11 @@ jobs:
         dotnet-version: '9.0.x'
         
     - name: Tesztek futtatása és riport generálása
-      
       run: dotnet test Temalabor.Tests --logger "trx;LogFileName=test_results.trx"
       
     - name: Teszteredmények publikálása a GitHubon
       uses: dorny/test-reporter@v1
-      if: success() || failure() 
+      if: success() || failure()
       with:
         name: .NET Teszteredmények
         path: '**/test_results.trx'
@@ -39,3 +38,11 @@ jobs:
       uses: JasonEtco/create-an-issue@v2
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Release készítése sikeres teszt után
+      if: success()
+      uses: ncipollo/release-action@v1
+      with:
+        tag: v1.0.${{ github.run_number }}
+        name: "Sikeres futás: v1.0.${{ github.run_number }}"
+        body: "Ez egy automatikusan generált kiadás, mivel minden teszt sikeresen lefutott a folyamat során."
