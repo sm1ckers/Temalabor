@@ -1,0 +1,32 @@
+name: .NET Tests
+
+on:
+  push:
+    branches: [ "main" ]
+
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Kód letöltése
+      uses: actions/checkout@v4
+      
+    - name: .NET beállítása
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '9.0.x'
+        
+    - name: Tesztek futtatása (Test)
+      run: dotnet test Temalabor.Tests
+      
+    - name: Issue készítése hiba esetén
+      if: failure()
+      uses: JasonEtco/create-an-issue@v2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
