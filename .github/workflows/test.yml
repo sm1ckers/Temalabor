@@ -4,10 +4,10 @@ on:
   push:
     branches: [ "main" ]
 
-
 permissions:
   issues: write
-  contents: read
+  contents: write
+  checks: write   
 
 jobs:
   test:
@@ -22,9 +22,18 @@ jobs:
       with:
         dotnet-version: '9.0.x'
         
-    - name: Tesztek futtatása (Test)
-      run: dotnet test Temalabor.Tests
+    - name: Tesztek futtatása és riport generálása
       
+      run: dotnet test Temalabor.Tests --logger "trx;LogFileName=test_results.trx"
+      
+    - name: Teszteredmények publikálása a GitHubon
+      uses: dorny/test-reporter@v1
+      if: success() || failure() 
+      with:
+        name: .NET Teszteredmények
+        path: '**/test_results.trx'
+        reporter: dotnet-trx
+
     - name: Issue készítése hiba esetén
       if: failure()
       uses: JasonEtco/create-an-issue@v2
